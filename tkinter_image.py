@@ -1,10 +1,44 @@
 from tkinter import *
+from tkinter import messagebox
 from PIL import ImageTk,Image,ImageOps
 import os 
+from tkinter import filedialog
 
 
+
+
+def open_file():
+    folder_path = filedialog.askdirectory()
+
+    if folder_path:
+        messagebox.showinfo(
+            title="abrindo",
+            message=f'O arquivo selecionado foi: {folder_path}')
+    else:
+        messagebox.showerror(
+            title="erro",
+            message="Nenhum diretório foi selecionado"
+        )
 
 root =Tk()
+
+
+#Criar menu
+menubar = Menu(root)
+
+filemenu = Menu(menubar, tearoff=0)
+
+filemenu.add_command(label="Open",
+                     command=open_file)
+filemenu.add_command(label="Save")
+filemenu.add_command(label="Exit")
+
+menubar.add_cascade(label="File",menu=filemenu)
+
+root.config(menu=menubar)
+
+
+
 #Lista para os arquivos da pasta de imagens
 arquivos = os.listdir("imagens")
 
@@ -97,5 +131,20 @@ btn.grid(column=1,row=1,sticky=E+W)
 
 btn= Button(root, text="Próximo",command=pro_image,bg="blue",fg="white",font="Arial")
 btn.grid(column=2,row=1,sticky=E+W)
+
+
+
+
+#dar funções para o botão do teclado passar para a proxima imagem
+
+
+
+root.bind('<Right>',lambda event: pro_image())
+root.bind('<Left>',lambda event: prev_image())
+root.bind('<Escape>',lambda event: root.quit())
+
+
+
+
 
 root.mainloop()
