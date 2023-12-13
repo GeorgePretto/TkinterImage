@@ -4,13 +4,64 @@ from PIL import ImageTk,Image,ImageOps
 import os 
 from tkinter import filedialog
 
+#Variavel para armazenar as imagens
+imagens = []
+
+#varialvel de controle do indice da imagem atual
+imagem_atual = 0
+
+
+#Varialvel para armazenar o label da imagem
+img_label = None
+
+
+#variavel para armazenar o caminho da pasta da imagem
+img_folder = ""
+
+
+#função para carregar as imagens
+def load_images():
+    global img_folder
+    global imagens
+
+    if img_folder:
+        imagens.clear()
+    #Lista para os arquivos da pasta de imagens
+        arquivos = os.listdir(img_folder)
+    #Percorre a lista de arquivos
+        for arquivo in arquivos:
+            try:
+
+                img = Image.open(os.path.join(img_folder,arquivo))
+            except Exception as e:
+                print(e)
+                continue
+            else:
+                img=ImageOps.contain(img,(500,500))
+        #Adiciona imagem a lista
+                imagens.append(ImageTk.PhotoImage(img))
+    else:
+        #cria uma imagem 
+        img = Image.new("RGB",(500,500))
+        #adiciona a imagem na lista
+        imagens.append(ImageTk.PhotoImage(img))
+    #Exibe arquivos em um Label
+    img_label = Label(root, image=imagens[imagem_atual])
+
+    img_label.grid(column=0,row=0,columnspan=3)
 
 
 
-def open_file():
+
+
+#definir função
+def open_folder():
     folder_path = filedialog.askdirectory()
 
     if folder_path:
+        load_images()
+        global img_folder
+        img_folder=folder_path
         messagebox.showinfo(
             title="abrindo",
             message=f'O arquivo selecionado foi: {folder_path}')
@@ -29,7 +80,7 @@ menubar = Menu(root)
 filemenu = Menu(menubar, tearoff=0)
 
 filemenu.add_command(label="Open",
-                     command=open_file)
+                     command=open_folder)
 filemenu.add_command(label="Save")
 filemenu.add_command(label="Exit")
 
@@ -37,10 +88,7 @@ menubar.add_cascade(label="File",menu=filemenu)
 
 root.config(menu=menubar)
 
-
-
-#Lista para os arquivos da pasta de imagens
-arquivos = os.listdir("imagens")
+load_images()
 
 
 root.iconbitmap("galeria.ico")
@@ -48,32 +96,6 @@ root.iconbitmap("galeria.ico")
 
 
 root.title("Galeria")
-#Variavel para armazenar as imagens
-imagens = []
-
-#varialvel de controle do indice da imagem atual
-imagem_atual = 0
-
-
-
-
-#Percorre a lista de arquivos
-for arquivo in arquivos:
-    try:
-
-        img = Image.open("imagens/"+arquivo)
-    except Exception as e:
-        pass
-        img=ImageOps.contain(img,(500,500))
-    #Adiciona imagem a lista
-    imagens.append(ImageTk.PhotoImage(img))
-
-
-#Exibe arquivos em um Label
-img_label = Label(root, image=imagens[imagem_atual])
-
-img_label.grid(column=0,row=0,columnspan=3)
-
 
 
 
